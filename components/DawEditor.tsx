@@ -173,6 +173,10 @@ export default function DawEditor() {
   const handlePlay = async () => {
     if (isPlaying) return;
 
+    // Start the AudioContext immediately on user gesture
+    // to satisfy mobile browser requirements
+    await Tone.start();
+
     const mod = await import('../daw_language_grammar.js');
     const parser = (mod.default ?? mod).parse;
 
@@ -206,7 +210,6 @@ export default function DawEditor() {
       ...ast.tracks.flatMap((t: any) => t.lines.map((l: any) => l.bar + 1))
     );
 
-    await Tone.start();
     Tone.Transport.bpm.value = tempo;
     Tone.Transport.loop = loop;
     Tone.Transport.loopEnd = `${lastBar}:0:0`;
